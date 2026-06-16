@@ -1,0 +1,220 @@
+{
+  "name": "Discount Coupons",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Information",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name"
+            },
+            {
+              "fieldLabel": "Email"
+            },
+            {
+              "fieldLabel": "PhoneNumber",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "91651d76-80eb-4cab-839b-83853d038c0b",
+      "name": "On form submission",
+      "webhookId": "0cdcf218-e32e-4a5f-9b91-fbcaa02b00ec"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/1D8-SqObAvxA_XCWV7IOuWGZL2UDnOPwSkmX38Hd2Sp4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PhoneNumber",
+              "displayName": "PhoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "73a23096-289d-4dec-b0b8-e11d58158b2b",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oymLHR6PkIh0zzpo",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98f0f42c-8b19-40a5-b0eb-259577d597e6",
+              "name": "Name",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "43f0ad15-96c1-4c35-a4be-6ece9928ee2b",
+              "name": "Name",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "2850a559-0cd2-4528-b56f-1d4423137023",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "0f2540c5-c015-4fb9-9a5f-c54d53e249fb",
+              "name": "PhoneNumber",
+              "value": "={{ $json.PhoneNumber }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "dbb8d1b5-fb8f-4a9a-b5d5-854b05df43c8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "=Welcome {{ $json.Name }}! Your discount is here ",
+        "emailType": "text",
+        "message": "=Hi {{ $json.Name }},\n\nThank you for submitting the form!\nWe're excited to offer you an exclusive 10% discount on your next purchase.\n\nBest regards,\nTeam",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "bdd12990-d2c1-46cb-99d7-d7db5339c88f",
+      "name": "Send a message",
+      "webhookId": "604985cc-c0a5-4cbd-8ecf-a862ab53bf23",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "egZs7rM5PsLTjph8",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f89ead3c-9bd9-40f8-a557-f6dc772a5cce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f08868202ceffb14ffdb20515440512904ca654bc637c4a73edc0faa05acdf84"
+  },
+  "nodeGroups": [],
+  "id": "uTgHqR09w5AYByei",
+  "tags": []
+}
