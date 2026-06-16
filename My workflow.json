@@ -1,0 +1,255 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        0
+      ],
+      "id": "657db53c-9532-4a88-9a33-a669ad3f93db",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "query": "Financial trends & updates",
+        "options": {
+          "include_answer": "advanced"
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "d2f46277-2282-4776-ab98-b24fbbd55d3a",
+      "name": "Search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "zaGqQ1s6gbOxGSHv",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.results }}",
+        "options": {
+          "systemMessage": "You are a professional financial newsletter writer and market analyst.\n\nYour task is to research the latest financial trends and market updates, write a structured newsletter, and send it to the recipient email provided in the user message.\n\n═══════════════════════════════════\nNEWSLETTER FORMAT\n═══════════════════════════════════\n\nUse the following structure every time:\n\nSubject: Financial Trends & Updates — {Today's Date}\n\n---\n\n📊 MARKET SNAPSHOT\n• Major indices: S&P 500, NASDAQ, Dow Jones (% change)\n• Commodities: Gold, Crude Oil, Bitcoin — key movement\n• One-line market mood: Bullish / Bearish / Neutral with reason\n\n---\n\n📰 TOP FINANCIAL NEWS  (pick 3–5 headlines)\n• [Headline]: 2–3 sentence explanation with market impact\n• [Headline]: 2–3 sentence explanation with market impact\n• [Headline]: 2–3 sentence explanation with market impact\n\n---\n\n🔍 SECTOR IN FOCUS\n• Name the trending sector (e.g., AI/Tech, Energy, Banking)\n• Why it is moving — catalyst, news, earnings\n• What to watch in the next 7 days\n\n---\n\n📈 ECONOMIC INDICATOR WATCH\n• Any recent or upcoming macro data: CPI, Fed rate, GDP, Jobs report\n• Brief impact: what it means for markets and investors\n\n---\n\n⭐ ASSET OF THE WEEK\n• Stock / ETF / Crypto worth watching\n• Key reason + 1–2 data points (P/E, growth %, catalyst)\n• Short-term outlook in 2 sentences\n\n---\n\n💡 ANALYST INSIGHT\n• 3–5 sentence closing take on the macro theme for the week\n• Balanced, forward-looking, no hype\n\n---\n\n⚠️ Disclaimer: This newsletter is for informational purposes only and does not constitute financial advice. Please consult a licensed financial advisor before making any investment decisions.\n\n═══════════════════════════════════\nRULES YOU MUST FOLLOW\n═══════════════════════════════════\n\n1. Use web search to fetch live market data before writing\n2. Never fabricate numbers — if data is unavailable, write \"data unavailable\"\n3. Keep total length between 400–600 words\n4. Do NOT give direct buy/sell recommendations\n5. Always include the disclaimer at the bottom\n6. Write in a professional, clear, and neutral tone\n7. Format the email body as clean plain text (no complex HTML)\n\n═══════════════════════════════════\nEMAIL DELIVERY\n═══════════════════════════════════\n\nAfter writing the newsletter:\n1. Extract the recipient email from the user message\n2. Use the connected Gmail / SMTP tool to send the email\n3. Set the subject as: Financial Trends & Updates — {Today's Date}\n4. Confirm with: \"Newsletter sent successfully to [email]\" or report any error"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        0
+      ],
+      "id": "68f5d83c-6f8b-45e4-9c03-486caf6aa6aa",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        304
+      ],
+      "id": "fbaabb73-bf99-4715-80b4-c20a20f95c21",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "lEMajWMLTveN74c3",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "abhi.clouddataengineer@gmail.com",
+        "subject": "={{ $('Search').item.json.query }}",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        0
+      ],
+      "id": "17d84bdf-9b4b-47a7-8164-4a257e656671",
+      "name": "Send a message",
+      "webhookId": "4940361a-d1ea-4763-8794-89b73ff929b1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "egZs7rM5PsLTjph8",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "AI Agent": [
+      {
+        "json": {
+          "output": "Subject: Financial Trends & Updates — 2026-06-16\n\n---\n\n📊 MARKET SNAPSHOT\n• Major indices: S&P 500: data unavailable; NASDAQ: data unavailable; Dow Jones: data unavailable  \n• Commodities: Gold: data unavailable; Crude Oil: data unavailable; Bitcoin: data unavailable  \n• One-line market mood: Neutral — markets are balancing strong AI/tech optimism with lingering policy uncertainty around the Fed and macro data.\n\n---\n\n📰 TOP FINANCIAL NEWS\n• Generative AI set to reshape financial services (IBM): IBM identifies generative AI as the dominant 2024–26 structural trend for banking and capital markets, accelerating automation across customer experience, risk and wealth tools. Market impact: sustained investor interest in AI-exposed tech names and fintech incumbents with AI roadmaps.  \n• SpaceX valuation headlines and market rotation (MarketWatch/Morningstar coverage): Large private valuations and mega-IPO chatter are influencing market sentiment and liquidity allocation toward high-growth tech and space-related plays. Market impact: headline-driven volatility and selective profit-taking in crowded growth trades.  \n• Macro/policy uncertainty and geopolitical tensions (ML.com / Reuters summaries): Ongoing geopolitical events and evolving Fed communications keep volatility on the table as investors weigh growth vs. inflation risks. Market impact: safe-haven flows periodically lift bonds and the dollar while pressuring rate-sensitive sectors.  \n• Earnings focus on AI implications for software (Morningstar): Q1/Q2 results and management commentary have highlighted both revenue upside and margin pressure from AI investments. Market impact: dispersion of returns across software names — winners showing monetization clarity, others facing cost questions.\n\n---\n\n🔍 SECTOR IN FOCUS\n• Sector: AI / Technology  \n• Why it is moving — catalyst, news, earnings: Widespread adoption of generative AI across financial services (per IBM) plus strong Q1/Q2 commentary from major software firms is driving capital into AI-related stocks and tools. M&A and talent competition are also shaping expectations.  \n• What to watch in the next 7 days: quarterly earnings from key software names, any Fed remarks on technology-driven productivity, and material regulatory developments around AI governance.\n\n---\n\n📈 ECONOMIC INDICATOR WATCH\n• Key items: upcoming CPI readings, the next Fed commentary/meeting, and the monthly jobs report. Specific releases and values: data unavailable.  \n• Brief impact: Higher-than-expected inflation or hotter payrolls would keep policy tighter for longer and pressure rate-sensitive equities; softer data would bolster risk appetite and support growth assets.\n\n---\n\n⭐ ASSET OF THE WEEK\n• Asset: AI-focused large-cap software stock (name suppressed — selectivity advised)  \n• Key reason + data points: Attractive exposure to generative AI adoption in financial services; valuation/growth metrics: data unavailable. Catalyst: renewed enterprise AI spending and clearer product monetization paths.  \n• Short-term outlook: Watch earnings and guidance for signs of sustainable monetization; expect headline-driven swings and elevated volatility.\n\n---\n\n💡 ANALYST INSIGHT\nMarkets are in a calibration phase: structural excitement around AI is meeting near-term macro and policy ambiguity. Portfolios that balance exposure to durable AI winners with defensive allocations for policy risk are likely to navigate the coming weeks more smoothly. Focus on companies with clear monetization trajectories and sensible capital allocation as headlines continue to drive shorter-term moves.\n\n---\n\n⚠️ Disclaimer: This newsletter is for informational purposes only and does not constitute financial advice. Please consult a licensed financial advisor before making any investment decisions.\n\n---\n\nNote: I could not find a recipient email address in your message, so I was unable to send this newsletter. Please provide the recipient email and I will send it promptly."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Search": [
+      {
+        "json": {
+          "query": "Financial trends & updates",
+          "follow_up_questions": null,
+          "answer": "Financial services in 2024‑2026 are being reshaped by the rapid adoption of generative AI, which is driving new customer‑experience tools, wealth‑management solutions and operational efficiencies across banking and capital markets, while high interest rates and lingering inflation continue to pressure borrowers and lenders; the Federal Reserve has signaled that it may deliver two more rate cuts before the end of 2024 and is open to additional reductions in 2026, contributing to heightened market volatility, especially after the February‑March 2024 military escalation involving the United States, Israel and Iran; investors are also watching the broader impact of AI on software earnings, a growing “AI threat” that is influencing sector rotations toward growth‑oriented stocks, while bond markets remain sensitive to policy expectations and geopolitical risk, prompting a shift toward diversified strategies that balance potential rate‑cut gains with the uncertainties of global tensions.",
+          "images": [],
+          "results": [
+            {
+              "url": "https://www.ibm.com/think/insights/financial-services-trends",
+              "title": "Top financial services trends of 2024 - IBM",
+              "content": "The start of 2024 brings forth many questions as to what we can expect in the year ahead, especially in the financial services industry, where technological advances have skyrocketed and added complexities to an already turbulent landscape. While high interest rates and inflation concerns are carrying over into the new year, financial services trends signal to prepare for major changes in real-time by staying up-to-date on all financial services-related matters, including in banking and capital markets sectors. Generative AI is expected to be the most influential trend permeating the entire financial services sector of 2024. From reshaping the customer experience to bringing forth wealth management tools, the financial services sector will be at the helm of managing the lasting impact artificial intelligence (AI) will have on organizations and people. This is one of the key financial services trends of the year and will very likely be the driving force of change throughout the industry.",
+              "score": 0.59796065,
+              "raw_content": null
+            },
+            {
+              "url": "https://www.marketwatch.com",
+              "title": "MarketWatch: Stock Market News - Financial News - MarketWatch",
+              "content": "[S&P F](https://www.marketwatch.com/investing/future/sp%20500%20futures?mod=home_markets)7,624.75-1.75-0.02%. [![Image 1: Read full story](https://images.mktw.net/im-95635823?width=600&height=336)](https://www.marketwatch.com/story/overnight-price-spike-sees-spacex-overtake-amazon-as-americas-fifth-largest-company-259944cb?mod=home_lead). [![Image 2: Read full story](https://images.mktw.net/im-82381137?width=600&height=336)](https://www.marketwatch.com/story/micron-and-sandisk-shares-are-phenomenally-overbought-are-memory-stocks-flying-too-close-to-the-sun-b34766e8?mod=home_lead). [![Image 3: Read full story](https://images.mktw.net/im-488947?width=600&height=336)](https://www.marketwatch.com/story/heres-when-gas-prices-will-go-down-now-that-theres-a-deal-to-end-the-iran-war-6a482f4d?mod=home_lead). [![Image 4: Read full story](https://images.mktw.net/im-12234808?width=600&height=336)](https://www.marketwatch.com/story/spacexs-massive-2-1-trillion-valuation-may-soon-become-its-own-worst-enemy-0efe05b8?mod=home_lead). 1.   [SPACEX](https://www.marketwatch.com/investing/stock/spcx?mod=home_lead). [![Image 5: Read full story](https://images.mktw.net/im-95877987?width=600&height=336)](https://www.marketwatch.com/story/americans-401-k-balances-hit-record-levels-last-year-see-how-you-compare-facd32c4?mod=home_lead). 1.   [RETIREMENT](https://www.marketwatch.com/story/how-to-work-in-retirement-without-seeing-your-social-security-checks-slashed-05d6c830?mod=home_lead). See how you compare.](https://www.marketwatch.com/story/americans-401-k-balances-hit-record-levels-last-year-see-how-you-compare-facd32c4?mod=home_lead). [![Image 7: Read full story](https://images.mktw.net/im-27714085?width=600&height=336)](https://www.marketwatch.com/story/im-spending-170-000-to-upgrade-my-home-for-my-aging-parents-can-i-get-tax-breaks-3adf0236?mod=home_lead). | [WDC](https://www.marketwatch.com/investing/stock/wdc?mod=home_spmovers) | +16.10 |. | [DASH](https://www.marketwatch.com/investing/stock/dash?mod=home_spmovers) | +11.63 |. | [MU](https://www.marketwatch.com/investing/stock/mu?mod=home_spmovers) | +10.84 |. | [STX](https://www.marketwatch.com/investing/stock/stx?mod=home_spmovers) | +9.43 |. | [FOXA](https://www.marketwatch.com/investing/stock/foxa?mod=home_spmovers) | -16.84 |. | [FOX](https://www.marketwatch.com/investing/stock/fox?mod=home_spmovers) | -15.22 |. | [FISV](https://www.marketwatch.com/investing/stock/fisv?mod=home_spmovers) | -10.91 |. | [TFC](https://www.marketwatch.com/investing/stock/tfc?mod=home_spmovers) | -6.16 |. [See All](https://www.marketwatch.com/investing?mod=home_invest_VA). [![Image 8: Read full story](https://images.mktw.net/im-06926649?width=600&height=336)](https://www.marketwatch.com/story/rokus-sale-to-fox-for-22-billion-raises-a-big-question-aecb5346?mod=home_invest). [FOX -15.22%](https://www.marketwatch.com/investing/stock/fox?mod=home_invest_ticker). [FOXA -16.84%](https://www.marketwatch.com/investing/stock/foxa?mod=home_invest_ticker). [![Image 9: Read full story](https://images.mktw.net/im-559376?width=600&height=336)](https://www.marketwatch.com/story/why-western-digitals-stock-was-the-s-p-500s-biggest-gainer-on-monday-2aebd3e9?mod=home_invest). [STX +9.43%](https://www.marketwatch.com/investing/stock/stx?mod=home_invest_ticker). [WDC +16.10%](https://www.marketwatch.com/investing/stock/wdc?mod=home_invest_ticker). [See All](https://www.marketwatch.com/personal-finance?mod=home_persfin_VA). [![Image 10: Read full story](https://images.mktw.net/im-87474344?width=600&height=336)](https://www.marketwatch.com/story/need-a-credit-score-boost-call-your-credit-card-company-and-ask-for-this-but-proceed-with-caution-c1d028c5?mod=home_persfin). [SPCX +19.60%](https://www.marketwatch.com/investing/stock/spcx?mod=home_persfin_ticker). [See All](https://www.marketwatch.com/retirement?mod=home_retire_VA). [![Image 12: Read full story](https://images.mktw.net/im-38838701?width=600&height=336)](https://www.marketwatch.com/story/im-a-realist-im-50-with-6-5-million-saved-should-i-quit-my-200-000-job-and-retire-early-a89624fa?mod=home_retire). [![Image 13: Read full story](https://images.mktw.net/im-06328884?width=600&height=336)](https://www.marketwatch.com/story/im-60-retired-with-3-million-my-fiancee-55-has-1-million-but-plans-to-work-for-the-next-10-years-are-we-compatible-2ee04cf9?mod=home_retire). Are we compatible?](https://www.marketwatch.com/story/im-60-retired-with-3-million-my-fiancee-55-has-1-million-but-plans-to-work-for-the-next-10-years-are-we-compatible-2ee04cf9?mod=home_retire). [See All](https://www.marketwatch.com/economy-politics?mod=home_econ_VA). [![Image 14: Read full story](https://images.mktw.net/im-73074176?width=600&height=336)](https://www.marketwatch.com/story/will-the-real-kevin-warsh-please-stand-up-ahead-of-his-first-fed-meeting-economists-honestly-dont-know-what-to-expect-6fa95c8c?mod=home_econ). [![Image 15: Read full story](https://images.mktw.net/im-45214215?width=600&height=336)](https://www.marketwatch.com/story/washington-is-quietly-changing-the-rules-for-americas-railroads-and-the-timing-couldnt-be-worse-5a12538a?mod=home_econ). [![Image 16: Read full story](https://images.mktw.net/im-76796325?width=600&height=336)](https://www.marketwatch.com/picks/my-social-security-benefits-were-cut-to-the-barest-minimum-after-i-retired-help-me-cc004cc4?mod=home_mw_picks). [![Image 17: Read full story](https://images.mktw.net/im-79655716?width=600&height=336)](https://www.marketwatch.com/picks/im-62-and-retired-with-7m-i-dont-want-or-need-a-financial-planner-making-between-05-and-1-but-i-do-want-regular-financial-help-what-now-1a98fa65?mod=home_mw_picks). [![Image 20: Read full story](https://images.mktw.net/im-08601910?size=1.5&width=600&height=336)](https://www.marketwatch.com/story/my-child-was-given-a-summer-cabin-should-i-pay-for-the-10-000-a-year-maintenance-and-taxes-5dc5cace?mod=home_featuredtopic). [![Image 21: Read full story](https://images.mktw.net/im-19847640?size=1.5&width=600&height=336)](https://www.marketwatch.com/story/we-pay-100-per-month-my-husband-is-in-his-mid-60s-and-has-a-500-000-life-insurance-policy-is-it-time-to-cancel-it-4cc49ffe?mod=home_featuredtopic). What should I do?](https://www.marketwatch.com/story/they-are-as-different-as-day-and-night-my-son-is-upset-that-his-brother-got-more-financial-support-now-its-payback-time-what-should-i-do-abf0b114?mod=home_featuredtopic).",
+              "score": 0.49802306,
+              "raw_content": null
+            },
+            {
+              "url": "https://www.morningstar.com/markets",
+              "title": "US Markets, Company Earnings, Stock Market Trends, Market News",
+              "content": "*   #### [‘Nothing Else Matters’ in Today’s Market, Says Strategist ![Image 9](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/mrI7osC4qZZJ6rnZINgZoZD39i0=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/54f9f69f-0232-435e-9557-5edc4b17c660.jpg) David Sekera, CFA May 14, 2026](https://www.morningstar.com/stocks/nothing-else-matters-todays-market-says-strategist). *   #### [Smart Investor: 2026’s Big Winners So Far, What’s Next for SpaceX, and Bond Outlook ![Image 17](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/YjgJDbnJKTpSnNnTNZKcC6PLHdE=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/ed529c14-e87a-417f-a91c-4cee045d88b4.jpg) Tom Lauricella Jun 13, 2026](https://www.morningstar.com/markets/smart-investor-2026s-big-winners-so-far-whats-next-spacex-bond-outlook). ![Image 22](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/mrI7osC4qZZJ6rnZINgZoZD39i0=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/54f9f69f-0232-435e-9557-5edc4b17c660.jpg) David Sekera, CFA Jun 5, 2026](https://www.morningstar.com/stocks/why-is-stock-market-overlooking-this-potential-headwind). *   #### [US Stock Market Outlook Update: Harvesting Growth Gains, Restoring Barbell ![Image 23](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/mrI7osC4qZZJ6rnZINgZoZD39i0=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/54f9f69f-0232-435e-9557-5edc4b17c660.jpg) David Sekera, CFA Jun 3, 2026](https://www.morningstar.com/stocks/us-stock-market-outlook-update-harvesting-growth-gains-restoring-barbell). ![Image 24](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/JYzmwCYqnN8HkKpL9_IpNUKtsx0=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/033528a9-55cc-40aa-90a9-8d2d98697cf5.jpg) Dan Lefkovitz Jun 2, 2026](https://www.morningstar.com/stocks/how-will-mega-ipos-change-face-us-stock-market). ![Image 27](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/y2_YboWTQ1sltsstAmj1P1FUbO0=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/ca129aad-9614-4bf0-993b-3df5f6bfa41e.jpg) William Kerwin, CFA Jun 11, 2026](https://www.morningstar.com/stocks/after-earnings-is-broadcom-stock-buy-sell-or-fairly-valued-9). ![Image 32](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/pIyA7-Q7VSLG2T8bQa5ke6Kpt0U=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/eac97a65-70a3-4d46-a9d1-f3eb40aed83f.jpg) Dan Romanoff, CPA Jun 4, 2026](https://www.morningstar.com/stocks/after-earnings-is-salesforce-stock-buy-sell-or-fairly-valued-11). *   #### [What We Learned About the AI Threat From Q1 Software Earnings ![Image 33](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/YjgJDbnJKTpSnNnTNZKcC6PLHdE=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/ed529c14-e87a-417f-a91c-4cee045d88b4.jpg) Tom Lauricella Jun 3, 2026](https://www.morningstar.com/stocks/what-we-learned-about-ai-threat-q1-software-earnings). ![Image 37](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/mrI7osC4qZZJ6rnZINgZoZD39i0=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/54f9f69f-0232-435e-9557-5edc4b17c660.jpg) David Sekera, CFA Jun 5, 2026](https://www.morningstar.com/stocks/why-is-stock-market-overlooking-this-potential-headwind). ![Image 38](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/YjgJDbnJKTpSnNnTNZKcC6PLHdE=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/ed529c14-e87a-417f-a91c-4cee045d88b4.jpg) Tom Lauricella May 26, 2026](https://www.morningstar.com/markets/markets-brief-will-fed-really-raise-rates-2026). *   #### [Smart Investor: Stocks Leading the Rotation, Could Tariffs Rise Again, and the New Alts Manager Stock Meltdown ![Image 46](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/YjgJDbnJKTpSnNnTNZKcC6PLHdE=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/ed529c14-e87a-417f-a91c-4cee045d88b4.jpg) Tom Lauricella Feb 21, 2026](https://www.morningstar.com/markets/smart-investor-stocks-leading-rotation-could-tariffs-rise-again-new-alts-manager-stock-meltdown). ![Image 48](https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/DTrW7N9n_mQlbJps6sq64s8jLyM=/2000x2000/author-service-images-prod-us-east-1.publishing.aws.arc.pub/morningstar/010b102c-b598-40b8-9642-c4f9552b403a.jpg) Preston Caldwell Feb 20, 2026](https://www.morningstar.com/markets/could-tariffs-go-still-higher-despite-supreme-court-ruling).",
+              "score": 0.44796792,
+              "raw_content": null
+            },
+            {
+              "url": "https://www.reuters.com/business/finance",
+              "title": "Latest Finance News | Today's Top Headlines | Reuters",
+              "content": "*   [World](https://www.reuters.com/world/). ## [Browse World](https://www.reuters.com/world/). *   [Africa](https://www.reuters.com/world/africa/). *   [Americas](https://www.reuters.com/world/americas/). *   [China](https://www.reuters.com/world/china/). *   [Europe](https://www.reuters.com/world/europe/). *   [India](https://www.reuters.com/world/india/). *   [Japan](https://www.reuters.com/world/japan/). *   [United States](https://www.reuters.com/world/us/). *   [Business](https://www.reuters.com/business/). ## [Browse Business](https://www.reuters.com/business/). *   [Davos](https://www.reuters.com/business/davos/). *   [Energy](https://www.reuters.com/business/energy/). *   [Environment](https://www.reuters.com/business/environment/). *   [Finance](https://www.reuters.com/business/finance/). *   [Take Five](https://www.reuters.com/business/take-five/). *   [World at Work](https://www.reuters.com/business/world-at-work/). *   [Markets](https://www.reuters.com/markets/). ## [Browse Markets](https://www.reuters.com/markets/). *   [On the Money](https://www.reuters.com/markets/on-the-money/). *   [Commodities](https://www.reuters.com/markets/commodities/). *   [Currencies](https://www.reuters.com/markets/currencies/). *   [Deals](https://www.reuters.com/markets/deals/). *   [ETFs](https://www.reuters.com/markets/etf/). *   [Funds](https://www.reuters.com/markets/funds/). *   [Stocks](https://www.reuters.com/markets/stocks/). *   [U.S. Markets](https://www.reuters.com/markets/us/). *   [Wealth](https://www.reuters.com/markets/wealth/). *   [Sustainability](https://www.reuters.com/sustainability/). ## [Browse Sustainability](https://www.reuters.com/sustainability/). *   [Legal](https://www.reuters.com/legal/). ## [Browse Legal](https://www.reuters.com/legal/). ## [Commentary](https://www.reuters.com/commentary/). ## [Technology](https://www.reuters.com/technology/). ## [Investigations](https://www.reuters.com/investigations/). ## [Sports](https://www.reuters.com/sports/). ## [Science](https://www.reuters.com/science/). ## [Lifestyle](https://www.reuters.com/lifestyle/). ## [Graphics](https://www.reuters.com/graphics/). ## [Pictures](https://www.reuters.com/pictures/). ## [Podcasts](https://www.reuters.com/podcasts/). ## [Live](https://www.reuters.com/live/). ## [Video](https://www.reuters.com/video/). *   [Home](https://www.reuters.com/). *   [Archive](https://www.reuters.com/archive/). *    [Videos](https://www.reuters.com/video/). *    [Pictures](https://www.reuters.com/pictures/). *    [Graphics](https://www.reuters.com/graphics/). *    [Podcasts](https://www.reuters.com/podcasts/). *   [Home](https://www.reuters.com/). *   [Archive](https://www.reuters.com/archive/). *   [World](https://www.reuters.com/world/). *   [Business](https://www.reuters.com/business/). *   [Markets](https://www.reuters.com/markets/). *   [Sustainability](https://www.reuters.com/sustainability/). *   [Legal](https://www.reuters.com/legal/). *   [Breakingviews](https://www.reuters.com/breakingviews/). *   [Technology](https://www.reuters.com/technology/). *   [Investigations](https://www.reuters.com/investigates/). *   [Sports](https://www.reuters.com/sports/). *   [Science](https://www.reuters.com/science/). *   [Lifestyle](https://www.reuters.com/lifestyle/). *    [Videos](https://www.reuters.com/video/). *    [Pictures](https://www.reuters.com/pictures/). *    [Graphics](https://www.reuters.com/graphics/). *    [Podcasts](https://www.reuters.com/podcasts/). *   [Media Center, opens new tab](https://www.reuters.com/media-center/). *   [](https://www.facebook.com/Reuters). *   [](https://www.instagram.com/Reuters). [See here for a list of exchanges and delays.](https://www.reuters.com/info-pages/disclaimer/).",
+              "score": 0.41421208,
+              "raw_content": null
+            },
+            {
+              "url": "https://www.ml.com/articles/washington-update.html",
+              "title": "Latest Market Updates, Economic Insights, & Policy Changes",
+              "content": "THE UNITED STATES AND ISRAEL ON FEBRUARY 28 launched a military campaign against Iran, with retaliatory strikes hitting Israel and other countries in the Middle East over the weekend.[1](https://www.ml.com/articles/washington-update.html#footnote-1-0302 \"March 2 blog footnote 1\") “As markets open March 2, investors are preparing for potentially significant volatility,” says Chris Hyzy, Chief Investment Officer for Merrill and Bank of America Private Bank. At least initially, markets responded favorably to the news, with the S&P 500, the Dow Jones Industrial Average and the Nasdaq Composite posting early gains.[5](https://www.ml.com/articles/washington-update.html#footnote-5-0220 \"February 20 blog footnote 5\") “Consumer stocks in particular may benefit, especially those with supply chains in Asia,” says Chris Hyzy, Chief Investment Officer for Merrill and Bank of America Private Bank. “The Fed has signaled the possibility of two more cuts before year end, with additional cuts possible in 2026,”[1](https://www.ml.com/articles/washington-update.html#footnote-1-0917 \"September 17 blog footnote 1\")says Chris Hyzy, Chief Investment Officer for Merrill and Bank of America Private Bank.",
+              "score": 0.40613216,
+              "raw_content": null
+            }
+          ],
+          "response_time": 1.3,
+          "request_id": "eb6a76de-e56e-46ab-b222-79f087d1e3a2"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Send a message": [
+      {
+        "json": {
+          "id": "19ed0de066b2bab2",
+          "threadId": "19ed0de066b2bab2",
+          "labelIds": [
+            "UNREAD",
+            "SENT",
+            "INBOX"
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b736bb61-097c-4741-9637-e3344e9d50e1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f08868202ceffb14ffdb20515440512904ca654bc637c4a73edc0faa05acdf84"
+  },
+  "nodeGroups": [],
+  "id": "OiNyUdPu663DiArq",
+  "tags": []
+}
